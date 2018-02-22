@@ -53,7 +53,7 @@ $$ a(q, k) = q^T W k $$
 ### Dot product attention
 [@luong2015effective]
 
-$f$ is _parameter-free_, however $d_q$ **must** be equal to *d_k*.
+$f$ is _parameter-free_, however $d_q$ **must** be equal to $d_k$.
 
 $$ a(q, k) = q^T \cdot k $$
 
@@ -144,7 +144,11 @@ where $\sigma_i$ is a singular value of $A$.
 
 **Effect of regularization**:
 
-The matrix A is row-normalized (each out of $r$ rows should focus on one aspect). CONT
+The matrix A is row-normalized (each out of $r$ rows should focus on one aspect), and each row represents one module of attention. The matrix $AA^T$ contains the dot products of $\mathbf{a_i}$ and $\mathbf{a_j}$ on the location $i, j$. Obviously, the matrix $AA^T$ is a square matrix with diagonal elements equal to one (since $i$ = $j$), therefore the subtraction of the identity matrix.
+
+The remainder of the dot products can be seen as a measure of similarity between two discrete probability distributions over the same discrete space (the input sequence). The dot product of the pdfs produces a number between 0 and 1, 0 meaning the distributions are completely different, and 1 meaning they are equal. Therefore, the larger the overlap between the distributions, the higher the penalty is going to be.
+
+**Experiments**: Yelp dataset, Age dataset, SNLI (\* SNLI model described)
 
 
 ## Attention-over-Attention
