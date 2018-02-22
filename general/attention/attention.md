@@ -72,7 +72,7 @@ $$ s_i^{(t)} = softmax(a_i^{(t)})$$
 
 Where $x^{t}$ is the current input, $\hat{h}^{(t-1)}$ the hidden state in the **previous timestep**, $v$ a parameter vector and $h_i$ the previous hidden states (i < t - 1).
 
-**Note:** only the hidden state $h$ is used in the computation, and not the cell state $c$!
+**Note**: only the hidden state $h$ is used in the computation, and not the cell state $c$!
 
 Then the state vectors ($c, h$) are updated:
 
@@ -98,7 +98,7 @@ how to use self-attention in a sequence-to-sequence task where a decoder network
 treats the LSTMN model as a standard LSTM and uses intra-attention on top of it.
 
 * **Deep attention fusion**
-adds an additional gating mechanism into the LSTM cell update based on intra-attention. Formula in chapter 4. of paper.
+adds an additional gating mechanism into the LSTM cell update based on intra-attention. Formula in chapter 4 of paper.
 
 
 ## A structured self-attentive sentence embedding
@@ -150,6 +150,145 @@ The remainder of the dot products can be seen as a measure of similarity between
 
 **Experiments**: Yelp dataset, Age dataset, SNLI (\* SNLI model described)
 
+## Incorporating Structural Alignment Biases into an Attentional Neural Translation Model
+[@cohn2016incorporating]
+
+**Fertility**: each instance of source word is translated to a consistent number of tokens in the target language (IBM Models 3, 4, 5)
+
+**Absolute positional bias**: word order is similar in source and target
+
+**Relative position bias**, **alignment consistency**.
+
+**Note**: Good description of attention in NMT.
+
+Attention used: MLP attention (1.2.1), but with different notation
+
+$$
+f_{ji} = \mathbf{v}^T tanh(W^{ae} \mathbf{e}_ i + W^{ah} g_{j-1}) 
+$$
+
+Where $f_{ji}$ is the **energy** (before) between $g_{j-1}$, the target hidden state and $e_i$, the source encoding. The MLP has size $A$, and the dimensions of the parameters are:
+$W^{ae} \in \mathbb{R}^{A\times 2h}$, $W^{ah} \in \mathbb{R}^{A\times h}$ (decoder is unidirectional) and $\mathbf{v} \in \mathbb{R}^A$.
+
+Standard attention follows:
+
+$$
+\alpha_j = softmax(\mathbf{f}_ j)
+$$
+
+$$
+c_j = \sum_i \alpha_{ji} \mathbf{e}_ i
+$$
+
+**Incorporating position bias:** 
+
+a word at a relative position in the source aligns to a similar relative position at the target (A: obviously dependent on language pairs): $\frac{i}{I} \approx \frac{j}{J}$ [@dyer2013simple].
+
+$$
+f_{ji} = \mathbf{v}^T tanh(W^{ae} \mathbf{e}_ i + W^{ah} g_{j-1} + 
+ \underbrace{W^{ap} \psi_{j, i, I}}_ {\text{pos bias}})
+$$
+
+$$
+\psi_{j, i, I} = \left\lbrack log(1+j), log(1+i), log(1+I) \right\rbrack
+$$
+where, obviously, $W^{ap} \in \mathbb{R}^{A\times 3}$
+
+* Target length $J$ is excluded as it is unknown during encoding.
+* $log1p$ _"avoids numerical instabilities"_
+
+**Incorporating Markov condition:**
+
+Add another parameter to the already known MLP attention equation:
+
+$$
+f_{ji} = \mathbf{v}^T tanh(W^{ae} \mathbf{e}_ i + W^{ah} g_{j-1} + W^{ap} \psi_{j, i, I}
+ + \underbrace{W^{am} \xi (\alpha_{j-1};i)}_ {\text{markov param}})
+$$
+
+Where $\alpha_{j-1}$ is the **previous** attention vector. Since the length of that vector is dynamic (and therefore can't be fit by a single parameter matrix), the authors restrict themselves to using only local offset by $\pm k$ positions:
+
+$$
+\xi (\alpha_{j-1};i) = \lbrack \alpha_{j-1, i-k}, \ldots \alpha_{j-1, i}, \ldots \alpha_{j-1, i+k} \rbrack
+$$ 
+where, $W^{am} \in \mathbb{R}^{A\times (2k+1)}$
+
+**Fertility**:
+
+- the propensity for a word to be translated as a consistent number of words in the other language
+
+**Bidirectional translation**:
+
+Idea: attention should be roughly similar in forward and backward directions -- train so that there's a bonus for the trace of the product of attention matrices (which is bounded above by $min(I,J)$ and $\ge 0$)
+
+$$
+B = - tr(A^T_{X\to Y} A_{Y\to X})
+$$
+
+the total loss is then the sum of two unidirectional translations reduced by the attentional bonus:
+
+$$
+\mathbb{L} = -log p(\mathbf{t}|\mathbf{s}) - log p(\mathbf{s}|\mathbf{t}) + \gamma B
+$$
+
+## Attention is off-by-one
+**Six Challenges for Neural Machine Translation**, chapter **3.5**
+[@koehn2017six]
+
+Challenge **5.** _The attention model for NMT does not always fulfill the role of a word alignment model, but may in fact dramatically diverge._
+
+![EN to GER attention, well aligned](img/attn-offbyone.png){#id .class height=280px}\ ![GER to EN attention, off-by-one](img/attn-offbyone-ge-en.png){#id .class height=280px}
+
+However, as mentioned in the paper, this **misalignment is an outlier unique to German--English** translation to a larger scale and to a lesser scale otherwise.
+
+## Hard attention
+**Show, Attend and Tell: Neural Image Caption Generation with Visual Attention**, chapters **3** and **4**
+[@xu2015show]
+
+Add a parameter $Z_{\left\vert \cdot \right\vert} \hat{z}_ t$ to the standard LSTM formulation which is a dynamic representation of the relevant part of the image input at timestep $t$.
+
+**LSTM Reformulation**
+$$
+a_{\left\vert \cdot \right\vert} = \sigma (W_{\left\vert \cdot \right\vert} y_{t-1} + 
+                                           U_{\left\vert \cdot \right\vert} h_{t-1} + 
+                                           Z_{\left\vert \cdot \right\vert} \hat{z}_ t)
+$$
+$$
+f, i, \hat{c}, o = a_{\left\vert \cdot \right\vert}(y_{t-1},h_{t-1},\hat{z}_ t)
+$$
+$$
+c_t = f_t \odot c_{t-1} + i_t \odot \hat{c}_ t
+$$
+$$
+h_t = o_t \odot tanh(c_t)
+$$
+
+$\hat{z}_ t$ is computed via an attention mechanism from a set of _annotation vectors_ ${a_1,\ldots,a_L}, a_i \in \mathbb{R}^D$ obtained as a result of a CNN embedding different regions of the input image. $y_t$ are the output words which constitute a caption.
+
+**Computing attention**
+
+At each timestep of generating the output caption, we attend to a certain region of the image $a_i$.
+
+$$
+e_{ti} = f_{att}(a_i, h_{t-1})
+$$
+$$
+\alpha_ {ti} = softmax(e_{ti})
+$$
+$$
+\hat{z}_ t = \phi (\{\mathbf{a}_ i\}, \{\alpha_ i\})
+$$
+
+e.g. in classic attention, $\phi$ is a linear combination.
+
+**Note**: LSTM cell states are initialized to an average of the annotation vectors, passed through two MLPs (one for $c_0$, one for $h_0$)
+
+**Note**: when generating the next word, instead of a classifier on top of the output state, a deep output layer [@pascanu2013construct] is used as follows:
+$$
+p(y_t|a, y_t^{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t +L_z\hat{z}_ t))
+$$
+
+CONT
 
 ## Attention-over-Attention
 [@cui2016attention]
@@ -160,7 +299,8 @@ The remainder of the dot products can be seen as a measure of similarity between
 - two BiGRU embed query and document ($h_{doc} \in D\cdot 2h$, $h_{query} \in Q \cdot wh$)
 - matrix multiplication over the shared embedding dimension $2d$ produces the `pair-wise matching score`
 $$M = h_{doc}^T \cdot h_{query} \in R^{DxQ}$$
-- 
+
+CONT
 
 
 # References
