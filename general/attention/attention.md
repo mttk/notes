@@ -288,7 +288,38 @@ $$
 p(y_t|a, y_t^{t-1}) \propto exp(L_o(Ey_{t-1} + L_hh_t +L_z\hat{z}_ t))
 $$
 
-CONT
+**Learning hard attention**
+
+When the probabilities for attention over each region $\{\alpha_i^n\}$ are computed, sample a concrete location $\hat{s}^n_t$ to focus on from a Multinoulli distribution parametrized by $\alpha$.
+
+$$
+\hat{s}^n_t \sim Multinoulli_L(\{\alpha_i^n\})
+$$
+
+and use the REINFORCE [@williams1992simple] learning rule to estimate the gradient. This results in the following gradient estimate:
+
+$$
+\frac{\partial \mathbb{L}}{\partial W} \approx \frac{1}{N} \sum_{n=1}^N \left[ \frac{\partial log p(y|\hat{s}^n, a)}{\partial W} 
++ log p(y | \hat{s}^n, a) \frac{\partial log p(\hat{s}^n | a)}{\partial W} \right]
+$$
+
+Since the REINFORCE rule produces gradient estimates with high variance, a number of techniques are used to reduce the variance, such as Baselines [@weaver2001optimal] which uses a moving average of previously seen log likelihoods:
+
+$$
+b_k = 0.9 \times b_{k-1} + 0.1 \times log p(y | \hat{s}_ k, a)
+$$
+
+another technique to further reduce the estimator variance is adding the gradient of the entropy $E[$ of the Multinoulli distribution to the REINFORCE loss expression, resulting in:
+
+$$
+\frac{\partial \mathbb{L}}{\partial W} \approx \frac{1}{N} \sum_{n=1}^N \left[ \frac{\partial log p(y|\hat{s}^n, a)}{\partial W} 
++ \underbrace{\lambda_r log p(y | \hat{s}^n, a) \frac{\partial log p(\hat{s}^n | a)}{\partial W}}_ {\text{reinforce contribution}}
++ \underbrace{\lambda_e \frac{\partial H[\hat{s}^n]}{\partial W}}_ {\text{entropy contribution}} \right]
+$$
+
+$\lambda_r$ and $\lambda_e$ are learned by cross-validation.
+
+**another** improvement to robustness of this training rule is that with $p=0.5$, for a given image, the sampled location $\hat{s}$ is set to the expected value $\alpha$ (equivalent to deterministic attention).
 
 ## Attention-over-Attention
 [@cui2016attention]

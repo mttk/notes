@@ -2,3 +2,6 @@
 
 **Fertility** is the propensity for a word to be translated as a consistent number of words in the other language
 
+**REINFORCE** is an algorithm for gradient estimation in stochastic computation graphs [@williams1992simple]
+
+# References
