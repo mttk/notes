@@ -321,6 +321,65 @@ $\lambda_r$ and $\lambda_e$ are learned by cross-validation.
 
 **another** improvement to robustness of this training rule is that with $p=0.5$, for a given image, the sampled location $\hat{s}$ is set to the expected value $\alpha$ (equivalent to deterministic attention).
 
+## Dynamic coattention networks for QA
+[@xiong2016dynamic]
+
+LSTM encoder (one!) for document and question
+Additional non-linear layer on top of question encoding
+
+-- Sentinel vectors! [@merity2016pointer] added to end of each encoded sequence
+
+$$
+d_t = LSTM_{enc}(d_{t-1}, x_t^D)
+$$
+
+$$
+q_t = LSTM_{enc}(q_{t-1}, x_t^Q)
+$$
+
+$$
+Q = tanh(W^{(Q)} Q' + b^{(Q)})
+$$
+
+
+**Coattention encoder**:
+
+Attends to the document and the question simultaneously
+
+1. Compute affinity matrix between document and question words
+
+$$
+L = D^T Q \in \mathbb{R}^{(m+1)\times (n+1)}
+$$
+After normalizing the affinity matrix row-wise, we get the attention weights $A^Q$ for each word in the question, and when normalizing column-wise the attention weights for each word in the document $A^D$.
+
+Summaries (attention contexts) are computed by multiplying the document representation with respect to each word in the question
+
+$$
+C^Q = DA^Q \in \mathbb{R}^l\times (n+1)
+$$
+
+Then, compute $C^D$, a co-dependent representation of the question and document as the coattention context. The query and the summary are concatenated horizontally.
+
+$$
+C^D = [Q;C^Q] A^D \in \mathbb{R}^{2l\times (m+1)}
+$$
+
+The last step: run a Bi-LSTM over the concatenated document and codependent representation:
+
+$$
+u_t = BiLSTM(u_{t-1}, t_{t+1}, [d_t; c_t^D]) \in \mathbb{R}^{2l}
+$$
+
+$U=[u_1, ..., u_m] \in \mathbb{R}^2l\times m$ is then used as the foundation for selecting the span for the best possible answer.
+
+**Dynamic pointing decoder**:
+
+Producing the answer span in SQuAD: predicting the start and end points of the span.
+
+CONT (after Highway networks paper)
+
+
 ## Attention-over-Attention
 [@cui2016attention]
 
