@@ -21,6 +21,9 @@ $$
 # Dropout
 Introduced in: [@hinton2012improving]
 
+# Backpropagation
+Introduced in: [@rumelhart1985learning]
+
 # Maxout networks
 
 [@goodfellow2013maxout]

@@ -1,3 +1,2 @@
-# General
+# Relevant pytorch snippets
 
-### Bottle layer
