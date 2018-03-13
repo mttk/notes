@@ -4,4 +4,6 @@
 
 **REINFORCE** is an algorithm for gradient estimation in stochastic computation graphs [@williams1992simple]
 
+A **Lesioning experiment** is used to quantify the contributions of layers towards the network performance
+
 # References

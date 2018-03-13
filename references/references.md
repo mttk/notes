@@ -18,6 +18,62 @@ $$
 
 **Note**: this formulation, where each layer can propagate its input $x$ further requires that all of the elements have the same dimension ($y$, $x$, $T$, $H$). An option here is to use padding to upscale $x$ or sub-sampling, in order to reduce the dimensionality. An option is also to use a regular layer (without the highway connections) to change the dimensionality, and then continue with the highway layers.
 
+# Recurrent Highway Networks
+[@zilly2016recurrent]
+
+The paper sketches out the proof of the vanishing/exploding gradient problem and isolates its relation to the largest singular value of the recurrent weight matrix:
+
+$$
+\left\vert A \right\vert \le \left\vert R^T \right\vert \left\vert diag [f'(Ry^{[t-1]})]\right\vert \le \gamma \sigma_{max}
+$$
+
+The gradient vanishes when $\gamma \sigma_{max} < 1$ and explodes when the expression is larger than one.
+
+$\gamma$ is the maximum value the gradient of the activation function.
+
+Geršgorin circle theorem states:
+
+$$
+spec(A) \subset \bigcup_{i \in \left\{ 1, \ldots, n\right\}} \left\{ \lambda \in \mathbb{C} \left\lVert \lambda - a_{ii} \right\rVert_ {\mathbb{C}} \le \sum_{j=1, j \neq i}^n \left\vert a_{ij} \right\vert \right\}
+$$
+
+translated, the spectrum of eigenvelues of the square matrix $A \in \mathbb{R}^{n\times n}$ lies within the union of complex circles which are centered around the **diagonal values** of the matrix $A$, with a radius equal to the sum of the absolute values of the **non-diagonal** entries of each row.
+
+Essentially, this means that shifting the diagonal values shifts the center of the circles, and therefore the possible location of the eigenvalues. Also, increasing the values of the remaining elements increases the radius in which the eigenvalues are contained.
+
+TODO: Add viz of theorem w/TikZ
+
+**Initialization of recurrent weights** as mentioned in [@le2015simple], one way to circumvent this via initialization is to initialize the recurrent matrix as an identity matrix and the remainder as small random values. However, this method does nothing to mitigate the fact that the values of the matrix will change during training, resulting in the same exploding / vanishing gradient phenomenon.
+
+Essentially, a reformulation of a RNN in the form of a vertical highway network is used (more or less equal to LSTM, where the previous cell state is propagated input).
+
+Takeaways: 
+
+- most of the transform-processing is done in the first layer, and then to a lesser extent (first layer contextually transforms the input features? and the remaining layers use this contextual information).
+- passing the input along in a resnet-like or highway-like fashion is useful.
+- Geršgorin can help limit the range of singular values of a matrix.
+
+# Learning long term dependencies
+Dataset: pixel-by-pixel MNIST image classification, introduced in [@le2015simple]
+
+# Learning long-term dependencies in RNNs with Auxilliary Losses
+[@trinh2018learning]
+
+- Randomly sample one or multiple anchor positions
+- Use an unsupervised auxilliary loss
+  - Reconstruction auxilliary loss (reconstruct a subsequence given first symbol, enhances remembering)
+  - Prediction auxilliary loss (predict a future token in language-model fashion)
+- Trained in two phases:
+  - Pure unsupervised pretraining (minimize auxilliary loss)
+  - Semi-supervised learning where $min_{\theta} L_{sup}(\theta) + L_{aux}(\theta')$
+
+Hyperparameters: 
+- How frequently to sample the reconstructon segments, and how long they are
+
+The methods help with learning long-term dependencies, even when the backprop is truncated. Essentially, signal is needed for the network to remember things. That signal can't be achieved through very long backprop due to failure of credit assignment.
+
+Additional ablation study \& result analysis in paper.
+
 # Dropout
 Introduced in: [@hinton2012improving]
 
@@ -70,5 +126,39 @@ The N-dimensional block then computes N LSTM tranfsorms, one for each dimension.
 \end{equation}
 
 CONT
+
+# Learning to Skim Text
+[@yu2017learning]
+
+- Uses a policy gradient method to make decisions to skip a number of tokens in the input
+- Hyperparam: max jump size $K$, number of tokens to read before jumping $R$
+- Processing stops if
+    * Jumping softmax predicts 0
+    * Jump exceeds sequence length N
+    * The network processed all tokens
+- The last hidden state is used for prediction in downstream tasks
+
+REINFORCE procedure (+Baselines):
+
+Objective: 
+
+- Minimize cross-entropy error (classification loss)
+- Maximize expected reward under the current jumping policy (R = -1 for misclassification, +1 for correct)
+- Baselines regularization term: minimize difference between actual reward and predicted baseline
+
+# Annotation Artifacts in Natural Language Inference Data
+
+Classification model on just the _hypothesis_ of NLI achieves 67% on SNLI and 53% on MultiNLI. 
+
+"Negation and vagueness are highly correlated with ceratin inference classes. Our findings suggest that the success of natural language inference models to date has been overestimated, and that the task remains a hard open problem." -> 
+
+- entailed hypotheses contain gender-neutral references to people
+- purpose clauses are a sign of neutral hypotheses
+- negation correlates with contradiction
+
+**Annotation artifacts:** patterns in the data that occur as a result of the framing of the annotation task influencing the language used by the crowd workers.
+
+Discussion: "Many datasets contain annotation artifacts..." -- references to other examples of this phenomenon
+
 
 # References
