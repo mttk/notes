@@ -375,10 +375,17 @@ $U=[u_1, ..., u_m] \in \mathbb{R}^2l\times m$ is then used as the foundation for
 
 **Dynamic pointing decoder**:
 
-Producing the answer span in SQuAD: predicting the start and end points of the span.
+Producing the answer span in SQuAD:= predicting the start and end points of the span.
 
-CONT (after Highway networks paper)
+The dynamic decoder is a faux state machine whose statei s maintained by a LSTM based model. 
 
+$$
+h_i = LSTM_dec(h_{i-1}, [u_{s_{i-1}};u_{e_{i-1}}])
+$$
+
+where $u_s$ and $u_e$ are the representations of the previous estimates oft he start and end positions in the coattention encoding ($U$))
+
+Then, two Highway Maxout Networks (maxout networks with highways) are used to compute the predicted start and end locations. The loss is the cumulative softmax cross-entropy of the start and ent points across all iterations. The iterative LSTM-HMN procedure stops when both the start and end estimate don't change, or a maximum number of iterations is reached.
 
 ## Attention-over-Attention
 [@cui2016attention]

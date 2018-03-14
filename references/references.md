@@ -128,7 +128,7 @@ The N-dimensional block then computes N LSTM tranfsorms, one for each dimension.
 CONT
 
 # Learning to Skim Text
-[@yu2017learning]
+[@yu2017learning] : LSTM-Jump
 
 - Uses a policy gradient method to make decisions to skip a number of tokens in the input
 - Hyperparam: max jump size $K$, number of tokens to read before jumping $R$
@@ -146,8 +146,30 @@ Objective:
 - Maximize expected reward under the current jumping policy (R = -1 for misclassification, +1 for correct)
 - Baselines regularization term: minimize difference between actual reward and predicted baseline
 
-# Annotation Artifacts in Natural Language Inference Data
+# Neural Speed Reading via Skim-RNN
+[@seo2017neural]
 
+[OpenReview discussion](https://openreview.net/forum?id=Sy-dQG-Rb)
+
+Update just a part of the hidden state for irrelevant words (uses a smaller RNN) 
+
+The hard decision (whether the word is important or not) isn't differentiable -- the gradient is approximated by Gumbel-Softmax instead of REINFORCE (policy gradient). The method results in a reduced number of FLOPs (floating point operations).
+
+"skimming achieves higher accuracy compared to skipping the tokens, implying that paying some attention to unimportant tokens is better than completely ignoring (skipping) them"
+
+RNNs with hard decisions -- last paragraph of chapter 2, references
+
+**Model**:
+
+- Two RNNs, default (big), skim (small)
+- Binary hard decision of skimming is a stochastic multinomial variable over the probabilities of a single layer NN which accepts the next token and current hidden state
+- During inference, instead of sampling, the greedy argmax of the multinomial parameters is used
+
+
+
+
+# Annotation Artifacts in Natural Language Inference Data
+[@gururangan2018annotation]
 Classification model on just the _hypothesis_ of NLI achieves 67% on SNLI and 53% on MultiNLI. 
 
 "Negation and vagueness are highly correlated with ceratin inference classes. Our findings suggest that the success of natural language inference models to date has been overestimated, and that the task remains a hard open problem." -> 
