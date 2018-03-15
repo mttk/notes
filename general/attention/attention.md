@@ -380,7 +380,7 @@ Producing the answer span in SQuAD:= predicting the start and end points of the 
 The dynamic decoder is a faux state machine whose statei s maintained by a LSTM based model. 
 
 $$
-h_i = LSTM_dec(h_{i-1}, [u_{s_{i-1}};u_{e_{i-1}}])
+h_i = LSTM_{dec}(h_{i-1}, [u_{s_{i-1}};u_{e_{i-1}}])
 $$
 
 where $u_s$ and $u_e$ are the representations of the previous estimates oft he start and end positions in the coattention encoding ($U$))

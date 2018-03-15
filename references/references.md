@@ -149,7 +149,7 @@ Objective:
 # Neural Speed Reading via Skim-RNN
 [@seo2017neural]
 
-[OpenReview discussion](https://openreview.net/forum?id=Sy-dQG-Rb)
+OpenReview discussion: [link](https://openreview.net/forum?id=Sy-dQG-Rb)
 
 Update just a part of the hidden state for irrelevant words (uses a smaller RNN) 
 
@@ -204,6 +204,34 @@ $$
 **Discussion on openreview**:
 
 Similar to: [@jernite2016variable]
+
+# Variable Computation in Recurrent Neural Networks
+
+[@jernite2016variable]
+
+Variable Computation GRU and Variable Computation RNN (VCGRU, VCRNN)
+
+At each timestep $t$, the _scheduler_ takes the current hidden and input vectors and decides on the number of dimensions to use for the update ($d$). The first $d$ dimensions of the **hidden state and input vector (!)** are then used to compute the first $d$ elements of the new hidden state, while the rest is carried over from the previus state.
+
+**Scheduler**: function $m: \mathbb{R}^{2D} \to [0, 1]$ decides which portion of the hidden state to change.
+For each timestep t:
+
+$$
+m_t = \sigma (u \cdot h_{t-1} + v \cdot x_t + b) 
+$$
+
+The first $\lceil m_tD \rceil$ dimensions are then the ones updated. In the lower-dimensional recurrent unit, the upper left sub-square matrices of shape $d\times d$ are used.
+
+**Soft masking**: the decision to update only a subset of a state is essentially a hard chouce and makes the model non-differentianle. The hard choice is approximated by using a gating function which applies a soft mask.
+
+The gating vector $e_t$ is defined by:
+
+$$
+\forall i \in 1, \ldots , D, (e_t)_i = \text{Thres}_ {\epsilon} (\sigma (\lambda(m_tD - i)))
+$$
+
+Where $\lambda$ is a _sharpness parameter_, and Thres maps all values greater than $1-\epsilon$ and smaller than $\epsilon$ to 1 and 0.
+
 
 
 
