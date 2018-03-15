@@ -53,7 +53,7 @@ Takeaways:
 - passing the input along in a resnet-like or highway-like fashion is useful.
 - Geršgorin can help limit the range of singular values of a matrix.
 
-# Learning long term dependencies
+**Learning long term dependencies**
 Dataset: pixel-by-pixel MNIST image classification, introduced in [@le2015simple]
 
 # Learning long-term dependencies in RNNs with Auxilliary Losses
@@ -93,7 +93,7 @@ $$
 where $z_{ij} = x^T W_{\ldots ij} + b_{ij}$, $W \in \mathbb{R}^{d \times m \times k}$ and $b \in \mathbb{R}^{m \times k}$ are the learned model parameters.
 
 Essentially: instead of projecting into the output dimension $m$, project into $m\times k$ and max over the $k$ additional dimensions.
-Pytorch impl: [](https://github.com/pytorch/pytorch/issues/805)
+Pytorch impl: [link](https://github.com/pytorch/pytorch/issues/805)
 
 # Grid LSTM
 [@kalchbrenner2015grid]
@@ -165,11 +165,51 @@ RNNs with hard decisions -- last paragraph of chapter 2, references
 - Binary hard decision of skimming is a stochastic multinomial variable over the probabilities of a single layer NN which accepts the next token and current hidden state
 - During inference, instead of sampling, the greedy argmax of the multinomial parameters is used
 
+$$
+h_t = 
+  \begin{cases}
+    f(x_t, h_{t-1}), & \text{if}\ Q_t = 1 \\
+    [f'(x_t, h_{t-1});h_{t-1}[d'+1:d]], & \text{if}\ Q_t = 2
+  \end{cases}
+$$
+
+where $Q_t = 1$ means the network chose to fully read and $Q_t = 2$ means the network has decided to skim.The dimension $k$ of the multinomial distribution is $2$.
+
+**Gumbel-softmax**:
+
+Expected loss over the sequence of skim-read decisions is:
+
+$$
+\mathbb{E}_ {Q_t \sim Multinomial(p_t)} \left[ L(\sigma) \right] = \sum_Q L(\sigma;Q) P(Q) = \sum_Q L(\sigma; Q) \prod_j p_j^{Q_j}
+$$
+
+to approximate the expected loss, all of the hard decisions $Q_t$ need to be enumerated and evaluated, which is intractable. One approximation of the gradient is by using REINFORCE which while unbiased has high variance. A replacemnt is to use the gumbel-softmax distribution [@jang2016categorical].
+
+The reparametrization constructs a softmax over the probabilities of the multinomial distribution with an added Gumbel noise:
+
+$$
+r_t^i = \frac{exp((log(p_t^i) + g_t^i) / \tau)}
+             {\sum_j exp((log(p_t^j) + g_t^j) / \tau)}
+$$
+
+where $\tau$ is a temperature hyperparameter, and $g_t^i$  is an independent sample from $Gumbel(0, 1) = -log(-log(Uniform(0,1)))$. There are two distinct $r^i$'s, one for skim and one for fully read.
+
+To encourage the model to _skim when possible_, a regularization term is added which minimizes the mean of the negative log probability of skimming $\frac{1}{T} \sum log(p_t^2)$:
+
+$$
+L'(\sigma) = L(\sigma) + \gamma \frac{1}{T} \sum - log(p_t^2)
+$$
+
+
+**Discussion on openreview**:
+
+Similar to: [@jernite2016variable]
 
 
 
 # Annotation Artifacts in Natural Language Inference Data
 [@gururangan2018annotation]
+
 Classification model on just the _hypothesis_ of NLI achieves 67% on SNLI and 53% on MultiNLI. 
 
 "Negation and vagueness are highly correlated with ceratin inference classes. Our findings suggest that the success of natural language inference models to date has been overestimated, and that the task remains a hard open problem." -> 
