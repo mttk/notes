@@ -377,7 +377,7 @@ $U=[u_1, ..., u_m] \in \mathbb{R}^2l\times m$ is then used as the foundation for
 
 Producing the answer span in SQuAD:= predicting the start and end points of the span.
 
-The dynamic decoder is a faux state machine whose statei s maintained by a LSTM based model. 
+The dynamic decoder is a faux state machine whose state is maintained by a LSTM based model. 
 
 $$
 h_i = LSTM_{dec}(h_{i-1}, [u_{s_{i-1}};u_{e_{i-1}}])
@@ -387,17 +387,80 @@ where $u_s$ and $u_e$ are the representations of the previous estimates oft he s
 
 Then, two Highway Maxout Networks (maxout networks with highways) are used to compute the predicted start and end locations. The loss is the cumulative softmax cross-entropy of the start and ent points across all iterations. The iterative LSTM-HMN procedure stops when both the start and end estimate don't change, or a maximum number of iterations is reached.
 
+## A Decomposable Attention Model for Natural Language Inference
+[@parikh2016decomposable]
+
+Input: two sequences $a$ and $b$, a class label $c$
+
+Model:
+
+- **Attend**: soft-align elements of $a$ and $b$ to decompose the problem into a _comparison of aligned subphrases_
+- **Compare**: compare each aligned subphrase to produce a set of vectors based on each phrase from $a$ and its aligned phrase from $b$
+- **Aggregate**: concatenate the vectors and use them to predict $c$
+
+Use RELU MLP attention to compute cross-sentence relevances ("alignments"), then use those alignments to compute comparison vectors, then aggregate via sum - concat and predict.
+
+Tricks: Map OOV words randomly to 100 samples from $Normal(0,1)$ (add 100 additional random hashes for OOV words)
+
+Really poorly written...
+
 ## Attention-over-Attention
 [@cui2016attention]
 
+- Cloze-style tasks! (pick one word that completes a query)
 - Document, query $\in R^{\left\vert \mathbb{D} \right\vert \cdot 2h}, R^{\left\vert \mathbb{Q} \right\vert \cdot 2h}$
 - $D, Q$ are sequence lengths of document and query respectively
 - Shared embedding spaces for query and document (uses one embedding matrix for their joined vocabulary)
 - two BiGRU embed query and document ($h_{doc} \in D\cdot 2h$, $h_{query} \in Q \cdot wh$)
 - matrix multiplication over the shared embedding dimension $2d$ produces the `pair-wise matching score`
+
 $$M = h_{doc}^T \cdot h_{query} \in R^{DxQ}$$
 
-CONT
+The $i$th row and $j$th column $M(i,j)$ contains the _"correlation"_ between words $D_i$ and $Q_j$.
 
+**Individual attention**:
+
+Apply column-wise softmax - each column is document-level attention **given** a single query word (Q2D attention)
+
+**Attention-over-attention**:
+
+Calculate _reversed attention_ - apply row-wise softmax to get the relevance of each query word wrt a single document word. **Average** over the attention of document words towards the query words to get normalized attention for each query word **with respect to the whole document**. Then, do dot product with the document-level attention (weighted sum of each document-level attention). Final (unnormalized) probabilities for each word are achieved by summing over the attention weights for each word that appears in the document $D$.
+
+$$
+M(i,j) = h_{doc}(i)^T \cdot h_{query}(j) \in \mathbb{R}^{Q\times D}
+$$
+
+$h_{\cdot}$ are the contextual embeddings of the document / query. $D$, $Q$ are document and query dimensions (num of tokens).
+
+$$
+\alpha (t) = softmax(M, dim=1) \in \mathbb{R}^{Q\times D}
+$$
+
+$$
+\beta (t) = softmax(M, dim=2) \in \mathbb{R}^{Q\times D}
+$$
+Now we have query-document ($\alpha$) and document-query ($\beta$) attentions
+
+$$
+\beta = \frac{1}{n}\sum_{t=1}^{D} \beta(t) \in \mathbb{R}^Q
+$$
+
+Average over individual document query attentions to get an average attention over each query word for the whole document
+
+$$
+s = \alpha^T \beta
+$$
+
+Dot product over the attentions -- weighted sum ($\beta$ are the weights) over query-document attention.
+
+$$
+P(w|D, Q) = \sum_{i\in I(w, D) s_i}, w \in V
+$$
+
+Where $I(w, D)$ are the positions of that word in the document (essentially, sum over the attention weights for each occurence of the same word in the document).
+
+**Tricks**: Top-k reranking: instead of using the best word, try to use each of the top-k words and run a language model to validate if the words fit.
+
+Additional experiments / ablation study in the paper
 
 # References
