@@ -232,7 +232,16 @@ $$
 
 Where $\lambda$ is a _sharpness parameter_, and Thres maps all values greater than $1-\epsilon$ and smaller than $\epsilon$ to 1 and 0.
 
+# Learning when to skim and when to read
+[@johansen2017learning]
 
+- Use a simple BOW model to predict first
+- Use a LSTM model if the BOW model is either not secure (1) or a decision network decides to use it (2)
+
+1. **Confidence based strategy**: if the probability of prediction of the BOW model is not larger than a threshold $\tau$, use the larger LSTM model.
+2. **Decision network**: train a network to predict, given an input sample, whether the BOW misclassified it and the LSTM classified it correctly. Labelled via the confusion matrix from the trained BOW and LSTM models.
+
+Saves computation time, beter accuracy than baseline.
 
 
 # Annotation Artifacts in Natural Language Inference Data
@@ -249,6 +258,20 @@ Classification model on just the _hypothesis_ of NLI achieves 67% on SNLI and 53
 **Annotation artifacts:** patterns in the data that occur as a result of the framing of the annotation task influencing the language used by the crowd workers.
 
 Discussion: "Many datasets contain annotation artifacts..." -- references to other examples of this phenomenon
+
+
+# Controlling Decoding for More Abstractive Summaries with Copy-Based Networks
+Reference not yet on Google Scholar: https://arxiv.org/pdf/1803.07038.pdf
+
+Cites [@see2017get] as reporting that "at test time, the [copy/generate] distribution is heavily skewed towards copying" (while this does not hold for train time) -- without teacher forcing, the algorithm mostly copies
+
+**Copy-controlled decoding**: add a penalty to beam search n order to push the mixture coefficient (copy vs generate) towards the intended ratio.
+
+$$
+s(y_{\le t}, X) = \sum_{t'=1}^t \underbrace{ log p (y_{t'} | y_{t}, X)}_ {\text{beam search}} - \underbrace{\eta_t max(0, m^* - \hat{m}_ v)}_ {\text{new penalty}}
+$$
+
+Where $m^{star}$ is a target coefficient, $\eta_t$ a time-varying penalty strength and $\hat{m}_ t = \frac{1}{t'} \sum_{t''=1}{t'} m_{t''}$ the average mixure component (higher means generate more, lower means sample more).
 
 
 # References
