@@ -10,9 +10,9 @@ So far, the organization of the notes is:
 - reading-list: TODO for more thorough reading ^(probably never...)^
     - Reading-list: [[pdf]](reading-list/reading_list.pdf)
 
-The writing is not perfect as I'm doing this in a minimalistic fashion (as much as I think I'll need to understand everything when I read it again).
+The writing is not perfect as I'm doing this in a minimalistic fashion (as much as I think I'll need to understand the papers when I re-read the notes).
 
-I'm using pandoc & a mix of markdown / latex. Best read things are pdfs, the markdown files can be compiled into pdfs by running ./p.sh from each directory.
+I'm using [pandoc](https://pandoc.org/) & a mix of markdown / latex. Best read things are *downloaded* pdfs, the markdown files can be compiled into pdfs by running `./p.sh` from each directory.
 
 
 **TODO:**
