@@ -337,5 +337,17 @@ _"Standard LSTM architectures, when properly regularized, outperform more recent
 
 Comparisons on Penn Treebank and Wikitext-2 with Recurrent Highway Networks [@zilly2016recurrent] and NAS [@zoph2016neural] as baselines with a vanilla LSTM [@hochreiter1997long].
 
+_"For the recurrent states, all architectures use either variational dropout (Gal & Ghahramani, 2016, state dropout) or recurrent dropout (Semeniuta et al., 2016), unless explicitly noted otherwise."_
+
+Hyperparameters optimized with Google Vizier [@golovin2017google]: learning rate, input embedding ratio, input dropout, state dropout, output dropout, weight decay (L2) and for deep LSTMs: intra-layer dropout.
+
+**Effect of individual featues**: 
+
+- **Down-projection** reduces ppl by 2-5 points
+- **Tied embeddings** improve ppl by 6 points
+- **Variational dropout** helps a lot
+- **Recurrent dropout** performs on par with variational dropout
+
+Figure 2.: input dropout, output dropout and state dropout help when relatively high ([0.6 ~ 0.8]), intra layer dropout helps when medium ([0.2 ~ 0.4])
 
 # References
