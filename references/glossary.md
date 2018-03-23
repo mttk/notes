@@ -6,4 +6,8 @@
 
 A **Lesioning experiment** is used to quantify the contributions of layers towards the network performance
 
+**Dropout** is introduced in: [@hinton2012improving]
+
+**Backpropagation** is introduced in: [@rumelhart1985learning]
+
 # References

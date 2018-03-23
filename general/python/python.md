@@ -54,3 +54,6 @@ Mixin classes are _init-less_ classes that add properties and methods into an ex
 
 https://stackoverflow.com/questions/533631/what-is-a-mixin-and-why-are-they-useful
 
+### New structures in Python 3
+
+https://github.com/topper-123/Articles/blob/master/New-interesting-data-types-in-Python3.rst

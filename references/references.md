@@ -74,12 +74,6 @@ The methods help with learning long-term dependencies, even when the backprop is
 
 Additional ablation study \& result analysis in paper.
 
-# Dropout
-Introduced in: [@hinton2012improving]
-
-# Backpropagation
-Introduced in: [@rumelhart1985learning]
-
 # Maxout networks
 
 [@goodfellow2013maxout]
@@ -125,7 +119,7 @@ The N-dimensional block then computes N LSTM tranfsorms, one for each dimension.
 \end{aligned}
 \end{equation}
 
-CONT
+CONT (postponed)
 
 # Learning to Skim Text
 [@yu2017learning] : LSTM-Jump
@@ -206,7 +200,6 @@ $$
 Similar to: [@jernite2016variable]
 
 # Variable Computation in Recurrent Neural Networks
-
 [@jernite2016variable]
 
 Variable Computation GRU and Variable Computation RNN (VCGRU, VCRNN)
@@ -244,6 +237,49 @@ Where $\lambda$ is a _sharpness parameter_, and Thres maps all values greater th
 Saves computation time, beter accuracy than baseline.
 
 
+# Skip RNN: Learning to Skip State Updates in Recurrent Neural Networks
+[@campos2017skip]
+
+OpenReview discussion: [link](https://openreview.net/forum?id=HkwVAXyCW)
+
+Official blogpost: [link](https://imatge-upc.github.io/skiprnn-2017-telecombcn/)
+
+Pytorch implementation: [link](https://github.com/gitabcworld/skiprnn_pytorch)
+
+Add a _binary state update gate_ $u_t \in \{0, 1\}$ to a RNN network, which selects whether the state of the RNN is updated ($u_t = 1$) or copied from the previous timestep ($u_t = 0$).
+(Highway-network like updates)
+
+$$
+u_t = f_{\text{binarize}}(\hat{u}_ t)
+$$
+
+Where $\hat{u}$ is the probability of each outcome, and $f_{\text{binarize}}$ is a function that maps $[0, 1] \to \{0, 1\}$
+
+$$
+s_t = u_t \cdot S(s_{t-1}, x_t) + (1 - u_t) \cdot s_{t-1}
+$$
+
+Where $S$ is the recurrent transition model (cell).
+
+$$
+\Delta \hat{u}_ t = \sigma (W_ps_t + b_p)
+$$
+
+$\Delta \hat{u}$ is an intermediate value of $\hat{u}$.
+
+$$
+\hat{u}_ {t+1} = u_t \cdot \Delta \hat{u}_ t + (1 - u_t) \cdot (\hat{u}_ t + min(\Delta \hat{u}_ t, 1 - \hat{u}_ t))
+$$
+
+_"The model formulation encodes the observation that the likelihood of requesting a new input to update the state increases with the number of consecutively skipped samples. "_
+The longer a state is not updated, the larger the probability that it will be updated ($1 - u_t$ part). On state update ($u_t = 1$) the accumulated value is flushed.
+
+**Gradient of binarize fn**: Straight-through (biased) estimator: 
+$$
+\frac{\partial f_{\text{binarize}} (x)}{\partial x} = 1
+$$
+
+
 # Annotation Artifacts in Natural Language Inference Data
 [@gururangan2018annotation]
 
@@ -272,6 +308,31 @@ s(y_{\le t}, X) = \sum_{t'=1}^t \underbrace{ log p (y_{t'} | y_{t}, X)}_ {\text{
 $$
 
 Where $m^{star}$ is a target coefficient, $\eta_t$ a time-varying penalty strength and $\hat{m}_ t = \frac{1}{t'} \sum_{t''=1}{t'} m_{t''}$ the average mixure component (higher means generate more, lower means sample more).
+
+
+# On the Importance of Single Directions for Generalization
+[@morcos2018importance]
+
+- Networks that overfit and memorize data are more dependent on single directions (activation of a single unit / feature map).
+
+- Interpretable neurons / units are not more or less important than uninterpretable.
+
+- Batchnorm effectively decreases class selectivity of feature maps and makes them more robust towards overfitting / underfitting.
+
+All experiments use ReLU nonlinearities and are trained on MNIST, CIFAR-10 and ImageNet.
+
+Class-conditional mean activity = mean value when an image from a certain class is input
+
+$$
+selectivity = \frac{\mu_{max} - \mu_{-max}}{\mu_{max} + \mu_{-max}}
+$$
+
+Selectivity of 0 means that the average activity of a unit is the same across classes, while 1 means that the unit only fires for a single class.
+
+
+# On the State of the Art of Evaluation in Neural Language Models 
+[@melis2017state]
+
 
 
 # References

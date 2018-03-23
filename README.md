@@ -7,7 +7,7 @@ So far, the organization of the notes is:
     - Attention in neural networks: [[pdf]](general/attention/attention.pdf)
 - references: just a mix of papers with small notes on their content & keywords
     - Summaries of read references: [[pdf]](references/references.pdf)
-- reading-list: TODO for more thorough reading ^(probably never...)^
+- reading-list: TODO for more thorough reading _(probably never...)_
     - Reading-list: [[pdf]](reading-list/reading_list.pdf)
 
 The writing is not perfect as I'm doing this in a minimalistic fashion (as much as I think I'll need to understand the papers when I re-read the notes).
