@@ -1,1 +1,1 @@
-pandoc --variable urlcolor=cyan --number-sections --biblio=bibliography.bib -o hyperparameters.pdf hyperparameters.md
+pandoc --variable urlcolor=cyan --biblio=bibliography.bib -o hyperparameters.pdf hyperparameters.md

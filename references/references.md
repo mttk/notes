@@ -333,6 +333,8 @@ Selectivity of 0 means that the average activity of a unit is the same across cl
 # On the State of the Art of Evaluation in Neural Language Models 
 [@melis2017state]
 
+OpenReview discussion: [link](https://openreview.net/forum?id=ByJHuTgA-)
+
 _"Standard LSTM architectures, when properly regularized, outperform more recent models."_
 
 Comparisons on Penn Treebank and Wikitext-2 with Recurrent Highway Networks [@zilly2016recurrent] and NAS [@zoph2016neural] as baselines with a vanilla LSTM [@hochreiter1997long].
@@ -349,5 +351,42 @@ Hyperparameters optimized with Google Vizier [@golovin2017google]: learning rate
 - **Recurrent dropout** performs on par with variational dropout
 
 Figure 2.: input dropout, output dropout and state dropout help when relatively high ([0.6 ~ 0.8]), intra layer dropout helps when medium ([0.2 ~ 0.4])
+
+# Regularizing and Optimizing LSTM Language Models
+[@merity2017regularizing]
+
+OpenReview discussion [link](https://openreview.net/forum?id=SyyGPP0TZ)
+
+_"Given the over-parameterization of neural networks, generalization performance crucially relies on the ability to regularize the models sufficiently. Strategies such as dropout (Srivastava et al., 2014) and batch normalization (Ioffe & Szegedy, 2015) have found great success and are now ubiquitous in feed-forward and convolutional neural networks."_
+
+Awesome overview of regularization in RNNs in introduction.
+
+Regularization strategies:
+
+- Weight-dropped LSTM: DropConnect mask on H2H weights
+- Randomized length BPTT
+- Embedding dropout
+- Activation regularization
+- Temporal activation regularization
+
+Optimizer choice: Adam (generally), SGD (word-level LM), avSGD (Averaged SGD)
+
+**AvSGD**: _"AvSGD carries out iterations similar to SGD, but instead of returning the last iterate as the solution, returns an average of the iterates past a certain, tuned, threshold T. This threshold T is typically tuned and has a direct impact on the performance of the method.  We propose a variant of AvSGD where T is determined on the fly through a non-monotonic criterion and show that it achieves better training outcomes compared to SGD."_ [@polyak1992acceleration]
+
+**Classic SGD**:
+
+$$
+w_{k+1} = w_k - \gamma_k \hat{\nabla} f(w_k)
+$$
+
+where $\hat{\nabla}$ is a stochastic gradient computed over a minibatch, and $k$ the current iteration. References to various useful SGD analysis papers.
+
+**Averaged SGD**:
+
+params: learning rate, $\lambda$ - decay term, $alpha$ - power for $\eta$ (lr) update, $t_0$ - point (iteration) at which to start averaging (default pytorch: $1e6$) and weight decay - L2 reg strength.
+
+Take standard SGD steps, after some time point T start remembering weights multiplied by $\mu$. The final weight configuration is not the last iterate but the (weighted) average of the last $T_total - T$ iterates.
+
+CONT
 
 # References
