@@ -19,3 +19,4 @@ I'm using [pandoc](https://pandoc.org/) & a mix of markdown / latex. Best read t
 
 1. Indexing / categorisation
 2. List papers that are covered in READMEs
+3. Reading list labels (to read, to summarize)

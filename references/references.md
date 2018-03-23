@@ -333,6 +333,9 @@ Selectivity of 0 means that the average activity of a unit is the same across cl
 # On the State of the Art of Evaluation in Neural Language Models 
 [@melis2017state]
 
+_"Standard LSTM architectures, when properly regularized, outperform more recent models."_
+
+Comparisons on Penn Treebank and Wikitext-2 with Recurrent Highway Networks [@zilly2016recurrent] and NAS [@zoph2016neural] as baselines with a vanilla LSTM [@hochreiter1997long].
 
 
 # References
