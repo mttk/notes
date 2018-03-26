@@ -387,6 +387,12 @@ params: learning rate, $\lambda$ - decay term, $alpha$ - power for $\eta$ (lr) u
 
 Take standard SGD steps, after some time point T start remembering weights multiplied by $\mu$. The final weight configuration is not the last iterate but the (weighted) average of the last $T_total - T$ iterates.
 
-CONT
+**Regularizers**
+
+- Variational dropout: (sample one dropout mask, use it everywheres) for inputs and outputs of LSTMs
+- DropConnect: (sample dropout mask for every batch) for hidden to hidden transitions
+- Embedding dropout: remove some words **completely** with $p_{\epsilon}$, scale others by $\frac{1}{1 - p_{\epsilon}}$ 
+- Weight tying: input and output embedding spaces hare parameters
+- Activation regularization: 
 
 # References
