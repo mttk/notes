@@ -389,10 +389,21 @@ Take standard SGD steps, after some time point T start remembering weights multi
 
 **Regularizers**
 
-- Variational dropout: (sample one dropout mask, use it everywheres) for inputs and outputs of LSTMs
+- Variational dropout: (sample one dropout mask, use it everywhere) for inputs and outputs of LSTMs
 - DropConnect: (sample dropout mask for every batch) for hidden to hidden transitions
 - Embedding dropout: remove some words **completely** with $p_{\epsilon}$, scale others by $\frac{1}{1 - p_{\epsilon}}$ 
 - Weight tying: input and output embedding spaces hare parameters
-- Activation regularization: 
+- Activation regularization: regularize activations that are significantly larger than 0
+$$
+AR = \alpha L_2 (m \odot h_t)
+$$
+
+Where $m$ is the dropout mask applied to the outputs, $h_t$ are the inputs to the nonlinearity and $\alpha$ is a scaling parameter. 
+
+- Temporal activation regularization: penalize differences between subsequent hidden states (slowness regularizer)
+$$
+TAR = \beta L_2 (h_t - h_{t-1})
+$$
+
 
 # References
