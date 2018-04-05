@@ -1,4 +1,4 @@
-## Learning to generate reviews and discovering sentiment
+## [Learning to generate reviews and discovering sentiment](https://arxiv.org/pdf/1704.01444.pdf)
 
 Radford, Alec, Rafal Jozefowicz, and Ilya Sutskever. "Learning to generate reviews and discovering sentiment." arXiv preprint arXiv:1704.01444 (2017).
 
