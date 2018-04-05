@@ -385,7 +385,7 @@ where $\hat{\nabla}$ is a stochastic gradient computed over a minibatch, and $k$
 
 params: learning rate, $\lambda$ - decay term, $alpha$ - power for $\eta$ (lr) update, $t_0$ - point (iteration) at which to start averaging (default pytorch: $1e6$) and weight decay - L2 reg strength.
 
-Take standard SGD steps, after some time point T start remembering weights multiplied by $\mu$. The final weight configuration is not the last iterate but the (weighted) average of the last $T_total - T$ iterates.
+Take standard SGD steps, after some time point T start remembering weights multiplied by $\mu$. The final weight configuration is not the last iterate but the (weighted) average of the last $T_{total} - T$ iterates.
 
 **Regularizers**
 
@@ -405,5 +405,8 @@ $$
 TAR = \beta L_2 (h_t - h_{t-1})
 $$
 
+**Take-home** (Table 5 \& Chapter 6.3)
+
+Hidden-to-hidden weight dropping helps **a lot**, embeddinng dropout and Averaged SGD also help substantially. Remainder helps, but within a few perplexity points.
 
 # References

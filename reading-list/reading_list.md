@@ -5,5 +5,7 @@
 5. [Google Vizier: A Service for Black-Box Optimization](http://delivery.acm.org/10.1145/3100000/3098043/p1487-golovin.pdf?ip=161.53.65.243&id=3098043&acc=OA&key=4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E5945DC2EABF3343C&__acm__=1521816060_f8e5a5274dbf83b05b40a09fb442c1dc) [@golovin2017google]
 6. [Zoneout: Regularizing RNNs by Randomly Preserving Hidden Activations](https://arxiv.org/pdf/1606.01305.pdf) [@krueger2016zoneout]
 7. [Regularization of neural networks using dropconnect](http://proceedings.mlr.press/v28/wan13.pdf) [@wan2013regularization]
+8. [Binarized neural networks: Training deep neural networks with weights and activations constrained to+ 1 or-1](https://arxiv.org/abs/1602.02830) [@courbariaux2016binarized]
+9. [Hierarchical multiscale recurrent neural networks](https://openreview.net/forum?id=S1di0sfgl) [@chung2016hierarchical]
 
 # References
