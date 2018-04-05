@@ -18,3 +18,8 @@ model.cuda(1)
 ## Dropout in RNN params
 
 Is just dropout on the outputs.
+
+## Blog posts / tutorials
+
+http://blog.christianperone.com/2018/03/pytorch-internal-architecture-tour/
+
