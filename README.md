@@ -22,4 +22,4 @@ I'm using [pandoc](https://pandoc.org/) & a mix of markdown / latex. Best read t
 3. Reading list labels (to read, to summarize)
 4. Move and merge all bibliographies
 5. Find a better way to showcase PDFs
-6. Urls need to be highlighted (update pandoc to >= 2.x)
+6. ~~Urls need to be highlighted (update pandoc to >= 2.x)~~
