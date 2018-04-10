@@ -6,7 +6,8 @@ Radford, Alec, Rafal Jozefowicz, and Ilya Sutskever. "Learning to generate revie
 
 **Score:** [91.8] Accuracy
 
-**Model:** Byte mLSTM
+**Model:** Byte (char) mLSTM
 
-**Notes:** Single layer mLSTM network with 4096 units with a logistic regression classifier on top. L1 penalty, _"we use an L1 penalty for text classification results instead of L2 as we found this performed better in the very low data regime"._
+**Notes:** Single layer mLSTM language model pre-trained on a large Amazon customer review corpus with 4096 units. Used as a feature extractor for a logistic regression classifier. L1 penalty, _"we use an L1 penalty for text classification results instead of L2 as we found this performed better in the very low data regime"._
+
 
