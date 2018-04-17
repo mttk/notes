@@ -23,3 +23,10 @@ Is just dropout on the outputs.
 
 http://blog.christianperone.com/2018/03/pytorch-internal-architecture-tour/
 
+## Memory size of parameters
+Credits to @apazske
+```python
+total_size = 0
+for tensor in model.state_dict().values():
+   total_size += tensor.numel() * tensor.element_size()
+```

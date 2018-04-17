@@ -10,5 +10,15 @@
 10. [Deliberation Networks: Sequence Generation Beyond One-Pass Decoding](https://papers.nips.cc/paper/6775-deliberation-networks-sequence-generation-beyond-one-pass-decoding.pdf) [@xia2017deliberation]
 11. [Weight Normalization: A Simple Reparameterization to Accelerate Training of Deep Neural Networks](https://arxiv.org/pdf/1602.07868.pdf) [@salimans2016weight]
 12. [Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour](https://arxiv.org/pdf/1706.02677.pdf) [@goyal2017accurate]
+13. [Deep learning with dynamic computation graphs](https://openreview.net/pdf?id=ryrGawqex) [@looks2017deep]
+14. [Towards universal paraphrastic sentence embeddings](https://arxiv.org/pdf/1511.08198.pdf) [@wieting2015towards]
+15. [Hyperbolic Entailment Cones for Learning Hierarchical Embeddings](https://arxiv.org/pdf/1804.01882.pdf) [@ganea2018hyperbolic] **[Urgent!]**
+16. [Neural Autoregressive Flows](https://arxiv.org/pdf/1804.00779.pdf) [@huang2018neural] **[Urgent!]**
+17. [Attentive Language Models](http://aclweb.org/anthology/I17-1045) [@salton2017attentive]
+18. [Weight normalization: A simple reparameterization to accelerate training of deep neural networks](https://arxiv.org/pdf/1602.07868.pdf) [@salimans2016weight]
+19. [Accurate, large minibatch SGD: training imagenet in 1 hour](https://arxiv.org/pdf/1706.02677.pdf) [@goyal2017accurate]
+
+
+
 
 # References
