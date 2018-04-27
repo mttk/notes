@@ -17,7 +17,7 @@
 17. [Attentive Language Models](http://aclweb.org/anthology/I17-1045) [@salton2017attentive]
 18. [Weight normalization: A simple reparameterization to accelerate training of deep neural networks](https://arxiv.org/pdf/1602.07868.pdf) [@salimans2016weight]
 19. [Accurate, large minibatch SGD: training imagenet in 1 hour](https://arxiv.org/pdf/1706.02677.pdf) [@goyal2017accurate]
-
+20. [ An Information Theoretic View for Deep Learning](https://arxiv.org/abs/1804.09060) [No citation yet]
 
 
 
